@@ -1,0 +1,66 @@
+from news.models import *
+
+u1 = User.objects.create_user('Семен')
+u2 = User.objects.create_user('Максим')
+
+auth1 = Author.objects.create(author_User = u1, rating_Author = 0)
+auth2 = Author.objects.create(author_User = u2, rating_Author = 0)
+
+cat1 = Category.objects.create(name = 'Спорт')
+cat2 = Category.objects.create(name = 'Музыка')
+cat3 = Category.objects.create(name = 'Кино')
+cat4 = Category.objects.create(name = 'Игры')
+
+post1 = Post.objects.create(author=auth1, category_type=Post.ARTICLE, title='Заголовок статьи 1', text='Текст статьи 1')
+post2 = Post.objects.create(author=auth2, category_type=Post.ARTICLE, title='Заголовок статьи 2', text='Текст статьи 2')
+news1 = Post.objects.create(author=auth1, category_type=Post.NEWS, title='Заголовок новости 1', text='Текст новости 1')
+
+post1.post_category.add(cat1)
+post1.post_category.add(cat4)
+
+post2.post_category.add(cat2)
+post2.post_category.add(cat3)
+
+news1.post_category.add(cat1)
+news1.post_category.add(cat2)
+
+comment1_post1 = Comment.objects.create(comment_post=post1, comment_user = u2,text='Отличная статья, спасибо за информацию!')
+comment2_post2 = Comment.objects.create(comment_post=post2, comment_user = u1, text='Интересная тема, хотелось бы узнать больше.')
+comment3_news1 = Comment.objects.create(comment_post=news1, comment_user = u2, text='Ого.')
+comment4_news1 = Comment.objects.create(comment_post=news1, comment_user = u2, text='вау.')
+
+post1.like()
+post1.like()
+post2.like()
+news1.like()
+post2.like()
+post2.dislike()
+
+comment2_post2.dislike()
+comment2_post2.dislike()
+
+comment1_post1.like()
+comment3_news1.like()
+comment4_news1.like()
+
+auth1.update_rating()
+auth2.update_rating()
+
+best_user = Author.objects.all().order_by('-rating_Author').first()
+best_user.author_User
+best_user.author_rating
+
+best_post = Post.objects.all().order_by('-rating').first()
+best_post.date_create
+best_post.author.author_User
+best_post.rating
+best_post.title
+best_post.preview()
+
+comments = Comment.objects.filter(comment_post=best_post)
+ for comment in comments:
+...     print(f"Дата: {comment.date_create}")
+...     print(f"Пользователь: {comment.comment_user.username}")
+...     print(f"Рейтинг: {comment.rating}")
+...     print(f"Текст: {comment.text}")
+...     print('\n')
