@@ -1,0 +1,14 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+News_one
+{% endblock title %}
+
+{% block content %}
+<h1>{{ new.title|censor }}</h1>
+<h2>{% current_time '%d %b %Y' %}</h2>
+<h3>{{ new.text|censor }}</h3>
+{% endblock content %}
