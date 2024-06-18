@@ -15,6 +15,10 @@ News
             <td><h3>{{ news|length }}</h3></td>
         </tr>
     </table>
+    {% if perms.news.add_news and perms.news.add_article %}
+    <a href="{% url 'news_create' %}">Добавить новость</a>
+    <a href="{% url 'article_create' %}">Добавить статью</a>
+    {% endif %}
    <hr>
    {% if news %}
        <table>
@@ -22,12 +26,32 @@ News
                <td>Название</td>
                <td>Дата</td>
                <td>Описание</td>
+               {% if perms.news.change_news or perms.news.delete_news or perms.news.change_article or perms.news.delete_article %}
+               <td>Действия</td>
+               {% endif %}
            </tr>
            {% for new in news %}
            <tr>
                <td>{{ new.title|censor }}</td>
                <td>{{ new.date_create|date:"d M Y" }}</td>
                <td>{{ new.text|truncatechars:20|censor }}</td>
+               <td>
+                    {% if new.category_type == 'NW' %}
+                      {% if perms.news.change_news %}
+                        <a href="{% url 'news_edit' pk=new.id %}">Изменить новость</a>
+                      {% endif %}
+                      {% if perms.news.delete_news %}
+                        <a href="{% url 'news_delete' pk=new.id %}">Удалить новость</a>
+                      {% endif %}
+                    {% elif new.category_type == 'AR' %}
+                      {% if perms.news.change_article %}
+                        <a href="{% url 'article_edit' pk=new.id %}">Изменить статью</a>
+                      {% endif %}
+                      {% if perms.news.delete_article %}
+                        <a href="{% url 'article_delete' pk=new.id %}">Удалить статью</a>
+                      {% endif %}
+                    {% endif %}
+               </td>
            </tr>
            {% endfor %}
 
